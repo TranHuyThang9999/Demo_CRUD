@@ -56,3 +56,7 @@ type SearchReply struct {
 	Name  string `json:"name"`
 	Count int    `json:"count"`
 }
+
+type ReponseListUser struct {
+	User []User `json:"user"`
+}

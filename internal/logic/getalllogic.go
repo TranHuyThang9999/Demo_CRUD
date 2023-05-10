@@ -10,26 +10,28 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetByIdLogic struct {
+type GetAllLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGetByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetByIdLogic {
-	return &GetByIdLogic{
+func NewGetAllLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetAllLogic {
+	return &GetAllLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GetByIdLogic) GetById(req *types.RequestId) (resp *types.User, err error) {
+func (l *GetAllLogic) GetAll() (resp *types.ReponseListUser, err error) {
 	// todo: add your logic here and delete this line
-
-	user, err := l.svcCtx.Collection.FindOne(l.ctx, req.Id)
+	user, err := l.svcCtx.Collection.GetAllUser(l.ctx)
 	if err != nil {
 		return nil, err
 	}
-	return mapper.ConvertUserDbToUserType1(user), nil
+	//	logx.Info(user)
+	return &types.ReponseListUser{
+		User: mapper.ConvertListUserDbToListUserType(user),
+	}, nil
 }

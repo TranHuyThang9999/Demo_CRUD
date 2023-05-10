@@ -63,6 +63,10 @@ type (
 		Count int    `json:"count"`
 	}
 )
+type ReponseListUser {
+	User []User `json:"user"`
+}
+
 service greet-api {
 	@handler login
 	post /user/login (LoginReq) returns (LoginReply)
@@ -70,6 +74,7 @@ service greet-api {
 
 @server(
 	jwt: Auth
+	middleware: Example
 )
 service greet-api {
 	@handler GetUser // TODO: set handler name and delete this comment
@@ -79,6 +84,17 @@ service greet-api {
 	post /users/create(UserRequest) returns (bool)
 	
 	@handler GetById
-	post /user/id (requestId) returns (User)
+	get /user/id/:id (requestId) returns (User)
+	
+	@handler  GetAll
+	get /users/all () returns (ReponseListUser)
+	
+	// UpdateById handles the update operation for a user by id.
+	@handler UpdateById
+	patch /user/update/id (User) returns (User)
+	
+	// DeleteById handles the delete operation for a user by id.
+	@handler DeleteById
+	delete /user/delete/id (User) returns (User)
 	
 }

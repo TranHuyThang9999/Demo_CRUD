@@ -21,23 +21,41 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{
-			{
-				Method:  http.MethodGet,
-				Path:    "/users/id/:userId",
-				Handler: GetUserHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/users/create",
-				Handler: CreateUserHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
-				Path:    "/user/id",
-				Handler: GetByIdHandler(serverCtx),
-			},
-		},
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.Example},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/id/:userId",
+					Handler: GetUserHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/users/create",
+					Handler: CreateUserHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/user/id/:id",
+					Handler: GetByIdHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/users/all",
+					Handler: GetAllHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPatch,
+					Path:    "/user/update/id",
+					Handler: UpdateByIdHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/user/delete/id",
+					Handler: DeleteByIdHandler(serverCtx),
+				},
+			}...,
+		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 }

@@ -17,7 +17,17 @@ func ConvertToUser(u *types.User) *database.User {
 	}
 }
 
-func ConvertTypeUseToDBUser(u *database.User) *types.User {
+func ConvertUserDbToUserType(u database.User) types.User {
+	return types.User{
+		Id:       u.Id,
+		UserName: u.UserName.String,
+		Password: u.Password.String,
+		Age:      u.Age.Int64,
+		Address:  u.Address.String,
+		Gender:   u.Gender.String,
+	}
+}
+func ConvertUserDbToUserType1(u *database.User) *types.User {
 	return &types.User{
 		Id:       u.Id,
 		UserName: u.UserName.String,
@@ -26,6 +36,13 @@ func ConvertTypeUseToDBUser(u *database.User) *types.User {
 		Address:  u.Address.String,
 		Gender:   u.Gender.String,
 	}
+}
+func ConvertListUserDbToListUserType(users []database.User) []types.User {
+	result := make([]types.User, len(users))
+	for i, u := range users {
+		result[i] = ConvertUserDbToUserType(u)
+	}
+	return result
 }
 
 // func ConvertToUserLogin(u *types.LoginReq) *databasecustomer.User {

@@ -16,6 +16,7 @@ type (
 	UserModel interface {
 		userModel
 		GetByUserName(ctx context.Context, userName string) (*User, error)
+		GetAllUser(ctx context.Context) ([]User, error)
 	}
 
 	customUserModel struct {
@@ -36,6 +37,33 @@ func (l *defaultUserModel) GetByUserName(ctx context.Context, userName string) (
 	switch err {
 	case nil:
 		return &resp, nil
+	case sqlc.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+//	func (l *defaultUserModel) GetAllUser(ctx context.Context) ([]User, error) {
+//		var users = make([]User, 0)
+//		query := fmt.Sprintf("select %s from %s", userRows, l.table)
+//		err := l.conn.QueryRowCtx(ctx, &users, query)
+//		switch err {
+//		case nil:
+//			return users, nil
+//		case sqlc.ErrNotFound:
+//			return nil, ErrNotFound
+//		default:
+//			return nil, err
+//		}
+//	}
+func (l *defaultUserModel) GetAllUser(ctx context.Context) ([]User, error) {
+	var users []User
+	query := fmt.Sprintf("SELECT * FROM %s", l.table)
+	err := l.conn.QueryRowsCtx(ctx, &users, query)
+	switch err {
+	case nil:
+		return users, nil
 	case sqlc.ErrNotFound:
 		return nil, ErrNotFound
 	default:
