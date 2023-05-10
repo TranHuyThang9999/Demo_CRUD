@@ -10,4 +10,4 @@ CacheRedis:
     Type: node
 Auth:
   AccessSecret: $AccessSecret
-  AccessExpire: $AccessExpire    
+  AccessExpire: 12000    

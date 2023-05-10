@@ -36,8 +36,12 @@ type LoginReq struct {
 }
 
 type LoginReply struct {
-	Code        string `json:"code"`
-	AccessToken string `json:"accessToken"`
+	Id           int64  `json:"id"`
+	UserName     string `json:"user_name"`
+	Gender       string `json:"gender"`
+	AccessToken  string `json:"accessToken"`
+	AccessExpire int64  `json:"accessExpire"`
+	RefreshAfter int64  `json:"refreshAfter"`
 }
 
 type RequestId struct {

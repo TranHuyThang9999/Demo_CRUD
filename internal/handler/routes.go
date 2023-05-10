@@ -13,6 +13,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodPost,
+				Path:    "/user/login",
+				Handler: loginHandler(serverCtx),
+			},
+		},
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
 				Method:  http.MethodGet,
 				Path:    "/users/id/:userId",
 				Handler: GetUserHandler(serverCtx),
@@ -24,14 +34,10 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
-				Path:    "/user/login",
-				Handler: loginHandler(serverCtx),
-			},
-			{
-				Method:  http.MethodPost,
 				Path:    "/user/id",
 				Handler: GetByIdHandler(serverCtx),
 			},
 		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 	)
 }

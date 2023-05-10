@@ -41,8 +41,12 @@ type (
 	}
 
 	LoginReply {
-		Code        string `json:"code"`
-		AccessToken string `json:"accessToken"`
+		Id           int64  `json:"id"`
+		UserName     string `json:"user_name"`
+		Gender       string `json:"gender"`
+		AccessToken  string `json:"accessToken"`
+		AccessExpire int64  `json:"accessExpire"`
+		RefreshAfter int64  `json:"refreshAfter"`
 	}
 )
 type requestId {
@@ -59,15 +63,21 @@ type (
 		Count int    `json:"count"`
 	}
 )
+service greet-api {
+	@handler login
+	post /user/login (LoginReq) returns (LoginReply)
+}
 
+@server(
+	jwt: Auth
+)
 service greet-api {
 	@handler GetUser // TODO: set handler name and delete this comment
 	get /users/id/:userId(request) returns(response)
 	
 	@handler CreateUser // TODO: set handler name and delete this comment
 	post /users/create(UserRequest) returns (bool)
-	@handler login
-	post /user/login (LoginReq) returns (LoginReply)
+	
 	@handler GetById
 	post /user/id (requestId) returns (User)
 	

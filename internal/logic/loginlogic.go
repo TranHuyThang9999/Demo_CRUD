@@ -2,12 +2,13 @@ package logic
 
 import (
 	"context"
+	"time"
 
 	"p8/internal/adapter/database"
 	"p8/internal/svc"
 	"p8/internal/types"
-	"p8/middware"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/zeromicro/go-zero/core/logx"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -29,7 +30,7 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginReply, err error) {
 	// todo: add your logic here and delete this line
 	var user *database.User
-	var token string
+	//var token string
 
 	user, err = l.svcCtx.Collection.GetByUserName(l.ctx, req.UserName)
 	if err != nil {
@@ -41,14 +42,35 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginReply, err err
 		return nil, result
 	}
 
-	token, err = middware.GenerateJWT(req.UserName, req.Password)
+	// token, err = middware.GenerateJWT(req.UserName, req.Password)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// l.Info(token)
+
+	now := time.Now().Unix()
+	accessExpire := l.svcCtx.Config.Auth.AccessExpire
+	jwtToken, err := l.getJwtToken(l.svcCtx.Config.Auth.AccessSecret, now, l.svcCtx.Config.Auth.AccessExpire, user.Id)
 	if err != nil {
 		return nil, err
 	}
-	l.Info(token)
+
 	return &types.LoginReply{
-		Code:        "",
-		AccessToken: token,
+		Id:           user.Id,
+		UserName:     user.UserName.String,
+		Gender:       user.Gender.String,
+		AccessToken:  jwtToken,
+		AccessExpire: now + accessExpire,
+		RefreshAfter: now + accessExpire/2,
 	}, nil
 
+}
+func (l *LoginLogic) getJwtToken(secretKey string, iat, seconds, userId int64) (string, error) {
+	claims := make(jwt.MapClaims)
+	claims["exp"] = iat + seconds
+	claims["iat"] = iat
+	claims["userId"] = userId
+	token := jwt.New(jwt.SigningMethodHS256)
+	token.Claims = claims
+	return token.SignedString([]byte(secretKey))
 }
