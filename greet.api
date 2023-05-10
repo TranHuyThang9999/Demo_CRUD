@@ -1,0 +1,74 @@
+syntax = "v1"
+
+info (
+	title: // TODO: add title
+	desc: // TODO: add description
+	author: "huythang"
+	email: "tranhuythang9999@gmail.com"
+)
+
+type request {
+	// TODO: add members here and delete this comment
+	Message string `json:"message"`
+}
+
+type response {
+	// TODO: add members here and delete this comment
+	Message string `json:"message"`
+}
+type User {
+	Id       int64  `json:"id"`
+	UserName string `json:"user_name"`
+	Password string `json:"password"`
+	Age      int64  `json:"age"`
+	Address  string `json:"address"`
+	Gender   string `json:"gender"`
+}
+type UserReponse {
+	Message string `json:"message"`
+}
+type UserRequest {
+	UserName string `json:"user_name"`
+	Password string `json:"password"`
+	Age      int64  `json:"age"`
+	Address  string `json:"address"`
+	Gender   string `json:"gender"`
+}
+type (
+	LoginReq {
+		UserName string `json:"user_name"`
+		Password string `json:"password"`
+	}
+
+	LoginReply {
+		Code        string `json:"code"`
+		AccessToken string `json:"accessToken"`
+	}
+)
+type requestId {
+	// TODO: add members here and delete this comment
+	Id int64 `json:"id"`
+}
+type (
+	SearchReq {
+		Name string `form:"name"`
+	}
+
+	SearchReply {
+		Name  string `json:"name"`
+		Count int    `json:"count"`
+	}
+)
+
+service greet-api {
+	@handler GetUser // TODO: set handler name and delete this comment
+	get /users/id/:userId(request) returns(response)
+	
+	@handler CreateUser // TODO: set handler name and delete this comment
+	post /users/create(UserRequest) returns (bool)
+	@handler login
+	post /user/login (LoginReq) returns (LoginReply)
+	@handler GetById
+	post /user/id (requestId) returns (User)
+	
+}

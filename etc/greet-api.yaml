@@ -1,0 +1,13 @@
+Name: greet-api
+Host: 0.0.0.0
+Port: 8888
+Mysql:
+  DataSource: root:1234@tcp(localhost:3306)/user?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai
+
+CacheRedis:
+  - Host: $host
+    Pass: $pass
+    Type: node
+Auth:
+  AccessSecret: $AccessSecret
+  AccessExpire: $AccessExpire    
